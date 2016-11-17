@@ -1,6 +1,9 @@
 # Round 1 介绍
 方案介绍：
-    在Map中利用正则表达式得到每一行的ip，访问地址后，将其放入set集合中去重。reduce中统计ip即为UV，通过sort排序可得到TOP10。之后保存reduce输出的数据供第二天查询。
+    解压每个文件夹里的access.log.gz文件，利用正则表达式过滤得到每一行的ip，访问地址后存入新文件，以日期命名。将这些新文件放入一个文件夹内并上传到HDFS供使用。
+    1.map中以IP为Key，value值为1。reduce中将接收的从map发送的KV对存入set集合去重，所得结果即为UV，并写入新文件保存。
+    2.map中以访问地址为Key，ip为value。在reduce中将value值也就是IP放入set集合中去重（由于key是访问地址，所以分桶时会将相同key的放在一起，所以集合中元素个数即为该key也就是访问地址的访问量，也就是pv。
+    3.将第二天的uv数据通过追加v重定向写入到第一天的数据后。重复第一种代码运行，由于set集合的存在会把留存的去重得到的结果为两天的UV。两天的UV之和减去两天的UV就是留存量。
 环境搭建：
     1.配置Java环境：
         vim /home/hadoop/.bashrc 最后一行添加 export JAVA_HOME=/home/hadoop/jdk1.6.0_45/ 
