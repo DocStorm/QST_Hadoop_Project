@@ -1,18 +1,18 @@
 统计需求：
 1.统计每日、周、月的UV数量：
     数据来源：每天的数据为以日期命名的一个文件夹内的数据，每周的数据是连续7天的文件夹里的数据，每月的数据就是以月份命名的文件夹里的数据。
-    数据输出：ip /t UV数
+    数据输出：UV /t UV数
     map输出：key(ip) /t value(1)
     reduce 输出：key(ip) /t value(UV数)
     map：通过正则匹配获取数据里的ip并作为key，将value值设置为1。将kv对输出。
-    reduce：自定义一个计数器count，每调用一次reduce则count++，最后输出以ip为key，count为value的键值对。因为key的值每变一次都要调用一次reduce所以count的值相当于有多少种key也就是UV数。
+    reduce：自定义一个计数器count，每调用一次reduce则count++，最后输出以UV为key，count为value的键值对。因为key的值每变一次都要调用一次reduce所以count的值相当于有多少种key也就是UV数。
 
 2.统计每日的PV量：
     数据来源：数据为以日期命名的一个文件夹内的数据。
-    数据输出：date \t PV数
-    map输出：key(date) /t value(page)
-    reduce 输出：key(date) /t value(PV数)
-    map：通过正则匹配获取数据里的date并作为key，获取page作为value，将kv对输出。
+    数据输出：PV \t PV数
+    map输出：key(空字符串) /t value(page)
+    reduce 输出：key(PV) /t value(PV数)
+    map：把空字符串设为key，获取page作为value，将kv对输出。
     reduce：在Reducer中，定义一个静态类成员count，在reduce()方法中对page数进行累加，cleanup()一次性输出PV量。
 
 3.统计次日留存、次月留存：
