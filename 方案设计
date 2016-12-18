@@ -13,15 +13,15 @@
     map输出：key(空字符串) /t value(page)
     reduce 输出：key(PV) /t value(PV数)
     map：把空字符串设为key，获取page作为value，将kv对输出。
-    reduce：在Reducer中，定义一个静态类成员count，在reduce()方法中对page数进行累加，cleanup()一次性输出PV量。
+    reduce：在Reducer中，遍历迭代器values中值的个数，即为PV，cleanup()一次性输出PV量。
 
 3.统计次日留存、次月留存：
     数据来源：次日留存数据为某一天的数据和第二天的数据，次月留存则为某一月的数据和下一月的数据。
-    数据输出：date \t count
+    数据输出：NextDaySaver \t count
     map输出：key(ip) /t value(1或2)
     reduce 输出：key(date) /t value(留存数)
     map：判断输入数据的文件来源，若来源是第一天，将value值设置为1；若来源是第二天，则将value值设置为2。通过正则匹配获取数据里的ip并作为key，输出kv对。
-    reduce：标记ip访问状态，value = 1，exits1 = true；value = 2，exits2 = true；exits1=true && exits2=true，count++，通过cleanup()方法一次性输出date \t count
+    reduce：标记ip访问状态，value = 1，a = true；value = 2，b = true；a=true && b=true，count++，通过cleanup()方法一次性输出NextDaySaver \t count
 
 4.统计每类网页的跳转率：
     数据来源：每天的跳转率为以日期命名的一个文件夹内的数据，每周的跳转率是连续7天的文件夹里的数据，每月的跳转率就是以月份命名的文件夹里的数据
@@ -33,19 +33,19 @@
 
 5.统计每天从baidu跳转过来的PV：
     数据来源：以日期命名的一个文件夹内的数据
-    数据输出：baidu /t PV数
-    map输出：key(baidu) /t value(1)
-    reduce 输出：key(date) /t value(PV数)
-    map：通过正则匹配从baidu跳转的访问记录，将baidu设为key，将value值设置为1。将kv对输出。
-    reduce：定义静态成员变量sum，统计该类网页的PV总数。输出baidu /t PV数
+    数据输出：BaiduPV /t PV数
+    map输出：key(空字符串) /t value(正则匹配的baidu有关网页)
+    reduce 输出：key(BaiduPV) /t value(PV数)
+    map：通过正则匹配从baidu跳转的访问记录，将空字符串设为key，将正则匹配的baidu有关网页作为value值。将kv对输出。
+    reduce：遍历迭代器values中值的个数，即为百度跳转过来的PV。输出BaiduPV /t PV数
 
 6.统计每天iOS和Android的UV数：
     数据来源：以日期命名的一个文件夹内的数据
     数据输出：ip /t UV数
     map输出：key(ip) /t value(1)
-    reduce 输出：key(date) /t value(PV数)
+    reduce 输出：key(Android/iOS) /t value(PV数)
     map：通过正则匹配通过IOS或Android设备访问的记录，将ip设为key，将value值设置为1。将kv对输出。
-    reduce：自定义一个计数器count，每调用一次reduce则count++，最后输出以ip为key，count为value的键值对。因为key的值每变一次都要调用一次reduce所以count的值相当于有多少种key也就是UV数。
+    reduce：自定义一个计数器count，每调用一次reduce则count++，最后在cleanup输出以Android/iOS为key，count为value的键值对。因为key的值每变一次都要调用一次reduce所以count的值相当于有多少种key也就是UV数。
 
 
 实时查询服务需求：
