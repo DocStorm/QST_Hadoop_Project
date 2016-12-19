@@ -50,11 +50,11 @@
 
 实时查询服务需求：
 1.查询当前的show的访问数量：
-    (1) 通过mapreduce计算框架过滤输出show，ip，count
-    (2) 以show为rowkey，ip为列，count位列建show表，每次添加相同rowkey的ip时，在原来的列值追加，通过空格分隔，count++
+    (1) 通过mapreduce计算框架过滤出show，count
+    (2) 以show为rowkey，count为列建show表。
     (3) 从HBase中查询相应的show时，可以直接读取列为count的数据，该数据即为当前show的访问数量
 
 2.查询当前的musician的访问数量：
-    (1) 通过mapreduce计算框架过滤输出musician，ip，count
-    (2) 以musician为rowkey，ip为列，count位列建musician表，每次添加相同rowkey的ip时，在原来的列值追加，通过空格分隔，count++
+    (1) 通过mapreduce计算框架过滤输出musician，count
+    (2) 以musician为rowkey，count为列建musician表。
     (3) 从HBase中查询相应的musician时，可以直接读取列为count的数据，该数据即为当前musician的访问数量
